@@ -259,6 +259,18 @@ instance PowerTwo t => RandomAccessList (ZerolessList t) where
 
 main =
     let printTest (s, n) = putStrLn $ "  " ++ s ++ " = " ++ show n
+        -- append [0,1] [100] na BinaryList
+        xs1 = foldr cons (nil :: BinaryList LeafTree Int) [0, 1]
+        ys1 = foldr cons (nil :: BinaryList LeafTree Int) [100]
+        binResult = map (`lookup` append xs1 ys1) [0 .. 2]
+        -- Testi lookup, update in append na ZerolessList: gradimo seznam [0..9].
+        -- (zakomentirano dokler instanca ZerolessList ni dokončana)
+        -- zl       = foldr cons (nil :: ZerolessList LeafTree Int) [0 .. 9]
+        -- lookupZL = map (`lookup` zl) [0, 3, 9]
+        -- readAll xs = map (`lookup` xs) [0 .. 9]
+        -- updateZL = readAll (update 3 999 zl)
+        -- moreZL   = foldr cons (nil :: ZerolessList LeafTree Int) [100, 200, 300]
+        -- appendZL = map (`lookup` append zl moreZL) [0 .. 12]
      in do
         putStrLn "Peanova naravna števila"
         mapM_ printTest testPeano
@@ -266,3 +278,11 @@ main =
         mapM_ printTest testBinary
         putStrLn "Dvojiški zapis brez ničel"
         mapM_ printTest testZLBinary
+        putStrLn "Append za BinaryList (z lookup)"
+        putStrLn $ "    BinaryList: append [0,1] [100] = " ++ show binResult
+        -- putStrLn "Append za ZerolessList: append [0..9] [100,200,300]"
+        -- putStrLn $ "    ZerolessList: " ++ show appendZL
+        -- putStrLn "Lookup za ZerolessList (indeksi 0, 3, 9 v [0..9])"
+        -- putStrLn $ "    ZerolessList: " ++ show lookupZL
+        -- putStrLn "Update 3 999 v [0..9]"
+        -- putStrLn $ "    ZerolessList: " ++ show updateZL
