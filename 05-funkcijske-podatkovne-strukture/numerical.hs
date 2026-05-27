@@ -249,11 +249,26 @@ incZLBits []     = [One]
 incZLBits (One:ds) = Two : ds
 incZLBits (Two:ds) = One : incZLBits ds
 
+-- rešitev za na vaje (Okasaki, naloga 9.4)
+decZLBits :: [ZLBit] -> [ZLBit]
+decZLBits [One]    = []
+decZLBits (Two:ds) = One : ds
+decZLBits (One:ds) = Two : decZLBits ds
+
+-- rešitev za na vaje (Okasaki, naloga 9.4)
+addZLBits :: [ZLBit] -> [ZLBit] -> [ZLBit]
+addZLBits []        ds2       = ds2
+addZLBits ds1       []        = ds1
+addZLBits (One:ds1) (One:ds2) = Two : addZLBits ds1 ds2
+addZLBits (One:ds1) (Two:ds2) = One : incZLBits (addZLBits ds1 ds2)
+addZLBits (Two:ds1) (One:ds2) = One : incZLBits (addZLBits ds1 ds2)
+addZLBits (Two:ds1) (Two:ds2) = Two : incZLBits (addZLBits ds1 ds2)
+
 instance Natural ZLBinary where
-    zero           = ZBin []
-    incr (ZBin ds) = ZBin (incZLBits ds)
-    decr _         = error "za na vaje"
-    add _ _        = error "za na vaje"
+    zero                      = ZBin []
+    incr (ZBin ds)            = ZBin (incZLBits ds)
+    decr (ZBin ds)            = ZBin (decZLBits ds)
+    add (ZBin ds1) (ZBin ds2) = ZBin (addZLBits ds1 ds2)
 
 testZLBinary :: [(String, ZLBinary)]
 testZLBinary = testNatural
@@ -263,20 +278,71 @@ testZLBinary = testNatural
 data ZerolessDigit t a = ZD1 (t a) | ZD2 (t a) (t a) deriving Show
 newtype ZerolessList t a = ZL [ZerolessDigit t a] deriving Show
 
+consZeroless :: PowerTwo t => t a -> [ZerolessDigit t a] -> [ZerolessDigit t a]
+consZeroless t []               = [ZD1 t]
+consZeroless t (ZD1 t' : ds)    = ZD2 t t' : ds
+consZeroless t (ZD2 t1 t2 : ds) = ZD1 t : consZeroless (linkPow2 t1 t2) ds
+
+-- rešitev za na vaje (Okasaki, naloga 9.5): pomožna funkcija za tail.
+--
+-- Naloga 9.5 zahteva implementacijo preostalih funkcij iz RANDOMACCESSLIST
+-- (Okasaki, slika 9.4) razen head, ki ga obravnava že knjiga: torej cons,
+-- tail, lookup in update. Te uporabljajo naslednje funkcije razreda PowerTwo:
+--   cons    -> singleton, linkPow2
+--   tail    -> splitPow2  (preko unconsZeroless)
+--   lookup  -> sizePow2, lookupPow2
+--   update  -> sizePow2, updatePow2
+-- (Funkcije append Okasakijev podpis ne vključuje.)
+--
+-- V tretji vrstici si izposodimo prvo drevo z naslednjega položaja
+-- in ga s splitPow2 razpolovimo na dve drevesi velikosti 1.
+unconsZeroless :: PowerTwo t => [ZerolessDigit t a] -> (t a, [ZerolessDigit t a])
+unconsZeroless [ZD1 t]            = (t, [])
+unconsZeroless (ZD2 t1 t2 : ds)   = (t1, ZD1 t2 : ds)
+unconsZeroless (ZD1 t : ds)       = (t, ZD2 ta tb : ds')
+  where (t', ds') = unconsZeroless ds
+        (ta, tb)  = splitPow2 t'
+
+-- rešitev za na vaje (Okasaki, naloga 9.5): pomožna funkcija za append.
+--
+appendZeroless :: PowerTwo t => [ZerolessDigit t a] -> [ZerolessDigit t a] -> [ZerolessDigit t a]
+appendZeroless []  ds2 = ds2
+appendZeroless ds1 ds2 =
+    let (t, ds1') = unconsZeroless ds1
+    in  consZeroless t (appendZeroless ds1' ds2)
+
 instance PowerTwo t => RandomAccessList (ZerolessList t) where
-    nil            = ZL []
-    cons x (ZL ds) = ZL (consZeroless (singleton x) ds)
-      where
-        consZeroless t [] = [ZD1 t]
-        consZeroless t (ZD1 t' : ds) = ZD2 t t' : ds
-        consZeroless t (ZD2 t1 t2 : ds) = ZD1 t : consZeroless (linkPow2 t1 t2) ds
-    head (ZL (ZD1 t : _)) = lookupPow2 0 t
+    nil                      = ZL []
+    cons x (ZL ds)           = ZL (consZeroless (singleton x) ds)
+    head (ZL (ZD1 t : _))    = lookupPow2 0 t
     head (ZL (ZD2 t1 _ : _)) = lookupPow2 0 t1
-    tail _          = error "za na vaje"
-    append _ _      = error "za na vaje"
-    lookup _ _      = error "za na vaje"
-    update _ _ _    = error "za na vaje"
-    size _          = error "za na vaje"
+    tail (ZL ds)             = ZL ds' where (_, ds') = unconsZeroless ds
+    append (ZL ds1) (ZL ds2) = ZL (appendZeroless ds1 ds2)
+
+    -- Strukturno enako kot pri BinaryList, le da imamo namesto D0/D1 dva primera
+    -- ZD1/ZD2; pri ZD2 indeks lahko pade v prvo ali drugo drevo na istem položaju.
+    lookup i (ZL ds) = look i ds
+      where
+        look i (ZD1 t : ds)
+            | i < sizePow2 t                  = lookupPow2 i t
+            | otherwise                       = look (i - sizePow2 t) ds
+        look i (ZD2 t1 t2 : ds)
+            | i < sizePow2 t1                 = lookupPow2 i t1
+            | i < sizePow2 t1 + sizePow2 t2   = lookupPow2 (i - sizePow2 t1) t2
+            | otherwise                       = look (i - sizePow2 t1 - sizePow2 t2) ds
+    update i y (ZL ds) = ZL (upd i ds)
+      where
+        upd i (ZD1 t : ds)
+            | i < sizePow2 t                  = ZD1 (updatePow2 i y t) : ds
+            | otherwise                       = ZD1 t : upd (i - sizePow2 t) ds
+        upd i (ZD2 t1 t2 : ds)
+            | i < sizePow2 t1                 = ZD2 (updatePow2 i y t1) t2 : ds
+            | i < sizePow2 t1 + sizePow2 t2   = ZD2 t1 (updatePow2 (i - sizePow2 t1) y t2) : ds
+            | otherwise                       = ZD2 t1 t2 : upd (i - sizePow2 t1 - sizePow2 t2) ds
+    size (ZL ds) = sum [sizePow2 t | ZD1 t <- ds] + sum [sizePow2 t1 + sizePow2 t2 | ZD2 t1 t2 <- ds]
+
+testZerolessList :: [(String, ZerolessList LeafTree Int)]
+testZerolessList = testRandomAccessList
 
 ---
 
@@ -289,8 +355,10 @@ main =
         putStrLn "Dvojiški zapis"
         mapM_ printNumTest testBinary
         putStrLn "Dvojiški zapis brez ničel"
-        -- mapM_ printNumTest testZLBinary
+        mapM_ printNumTest testZLBinary
         putStrLn "Verižni seznami"
         mapM_ printListTest testList
         putStrLn "Zaporedja"
         mapM_ printListTest testSequence
+        putStrLn "Zaporedja brez ničel"
+        mapM_ printListTest testZerolessList
