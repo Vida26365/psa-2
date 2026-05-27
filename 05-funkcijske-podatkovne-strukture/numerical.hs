@@ -73,8 +73,8 @@ fromInt :: Natural n => Integer -> n
 fromInt 0 = zero
 fromInt n = incr (fromInt (n - 1))
 
-test :: Natural n => [(String, n)]
-test =
+testNatural :: Natural n => [(String, n)]
+testNatural =
     let padTo7 s = replicate (7 - length s) ' ' ++ s in
     let testInc = map (\i -> (padTo7 (show i), fromInt i)) [0..13]
         testDec = ("decr 14", decr (fromInt 14))
@@ -89,7 +89,7 @@ instance Natural Peano where
     add  = addPeano
 
 testPeano :: [(String, Peano)]
-testPeano = test
+testPeano = testNatural
 
 instance Natural Binary where
     zero                    = Bin []
@@ -98,7 +98,7 @@ instance Natural Binary where
     add (Bin ds1) (Bin ds2) = Bin (addBits ds1 ds2)
 
 testBinary :: [(String, Binary)]
-testBinary = test
+testBinary = testNatural
 
 ---
 
@@ -111,6 +111,20 @@ class RandomAccessList f where
     ---
     lookup  :: Int -> f a -> a
     update  :: Int -> a -> f a -> f a
+    size    :: f a -> Int
+
+fromList :: RandomAccessList f => [a] -> f a
+fromList [] = nil
+fromList (x:xs) = cons x (fromList xs)
+
+testRandomAccessList :: RandomAccessList f => [(String, f Int)]
+testRandomAccessList =
+    let xs = fromList [0 .. 6]
+        ys = fromList [7 .. 13]
+        testAppend = ("append", append xs ys)
+        testUpdate = ("update", update 6 6767 (append xs ys))
+    in
+        [testAppend, testUpdate]
 
 instance RandomAccessList List where
     nil                    = Nil
@@ -123,6 +137,11 @@ instance RandomAccessList List where
     lookup i (Cons _ xs)   = lookup (i-1) xs
     update 0 y (Cons _ xs) = Cons y xs
     update i y (Cons x xs) = Cons x (update (i-1) y xs)
+    size Nil         = 0
+    size (Cons _ xs) = 1 + size xs
+
+testList :: [(String, List Int)]
+testList = testRandomAccessList
 
 newtype Sequence a = Sequence (Int, Int -> a)
 
@@ -135,6 +154,10 @@ instance RandomAccessList Sequence where
         Sequence (m + n, \i -> if i < m then f i else g (i - m))
     lookup i (Sequence (_, f)) = f i
     update i y (Sequence (n, f)) = Sequence (n, \j -> if i == j then y else f j)
+    size (Sequence (n, _)) = n
+
+testSequence :: [(String, Sequence Int)]
+testSequence = testRandomAccessList
 
 ---
 
@@ -182,10 +205,8 @@ unconsPow2 (D0    : ds) = (t1, D1 t2 : ds')
 
 appendPow2 :: PowerTwo t => [Digit t a] -> [Digit t a] -> [Digit t a]
 appendPow2 []      ds2      = ds2
-appendPow2 ds1     []       = ds1
-appendPow2 (D0:ds1) (d:ds2) = d : appendPow2 ds1 ds2
-appendPow2 (d:ds1) (D0:ds2) = d : appendPow2 ds1 ds2
-appendPow2 (D1 d1:ds1) (D1 d2:ds2)  = D0 : (consPow2 (linkPow2 d1 d2) (appendPow2 ds1 ds2))
+appendPow2 ds1     ds2      = let (d, ds1') = unconsPow2 ds1
+                              in  consPow2 d (appendPow2 ds1' ds2)
 
 instance PowerTwo t => RandomAccessList (BinaryList t) where
     nil                      = BL []
@@ -207,6 +228,7 @@ instance PowerTwo t => RandomAccessList (BinaryList t) where
         upd i (D1 t : ds)
             | i < sizePow2 t  = D1 (updatePow2 i y t) : ds
             | otherwise       = D1 t : upd (i - sizePow2 t) ds
+    size (BL ds) = sum [sizePow2 t | D1 t <- ds]
 
 ---
 
@@ -234,7 +256,7 @@ instance Natural ZLBinary where
     add _ _        = error "za na vaje"
 
 testZLBinary :: [(String, ZLBinary)]
-testZLBinary = test
+testZLBinary = testNatural
 
 ---
 
@@ -251,38 +273,24 @@ instance PowerTwo t => RandomAccessList (ZerolessList t) where
     head (ZL (ZD1 t : _)) = lookupPow2 0 t
     head (ZL (ZD2 t1 _ : _)) = lookupPow2 0 t1
     tail _          = error "za na vaje"
-    append _ _       = error "za na vaje"
-    lookup _ _       = error "za na vaje"
-    update _ _ _     = error "za na vaje"
+    append _ _      = error "za na vaje"
+    lookup _ _      = error "za na vaje"
+    update _ _ _    = error "za na vaje"
+    size _          = error "za na vaje"
 
 ---
 
 main =
-    let printTest (s, n) = putStrLn $ "  " ++ s ++ " = " ++ show n
-        -- append [0,1] [100] na BinaryList
-        xs1 = foldr cons (nil :: BinaryList LeafTree Int) [0, 1]
-        ys1 = foldr cons (nil :: BinaryList LeafTree Int) [100]
-        binResult = map (`lookup` append xs1 ys1) [0 .. 2]
-        -- Testi lookup, update in append na ZerolessList: gradimo seznam [0..9].
-        -- (zakomentirano dokler instanca ZerolessList ni dokončana)
-        -- zl       = foldr cons (nil :: ZerolessList LeafTree Int) [0 .. 9]
-        -- lookupZL = map (`lookup` zl) [0, 3, 9]
-        -- readAll xs = map (`lookup` xs) [0 .. 9]
-        -- updateZL = readAll (update 3 999 zl)
-        -- moreZL   = foldr cons (nil :: ZerolessList LeafTree Int) [100, 200, 300]
-        -- appendZL = map (`lookup` append zl moreZL) [0 .. 12]
+    let printNumTest (s, n) = putStrLn $ "  " ++ s ++ " = " ++ show n
+        printListTest (s, xs) = putStrLn $ "  " ++ s ++ " = " ++ show (map (`lookup` xs) [0 .. size xs - 1])
      in do
         putStrLn "Peanova naravna števila"
-        mapM_ printTest testPeano
+        mapM_ printNumTest testPeano
         putStrLn "Dvojiški zapis"
-        mapM_ printTest testBinary
+        mapM_ printNumTest testBinary
         putStrLn "Dvojiški zapis brez ničel"
-        mapM_ printTest testZLBinary
-        putStrLn "Append za BinaryList (z lookup)"
-        putStrLn $ "    BinaryList: append [0,1] [100] = " ++ show binResult
-        -- putStrLn "Append za ZerolessList: append [0..9] [100,200,300]"
-        -- putStrLn $ "    ZerolessList: " ++ show appendZL
-        -- putStrLn "Lookup za ZerolessList (indeksi 0, 3, 9 v [0..9])"
-        -- putStrLn $ "    ZerolessList: " ++ show lookupZL
-        -- putStrLn "Update 3 999 v [0..9]"
-        -- putStrLn $ "    ZerolessList: " ++ show updateZL
+        -- mapM_ printNumTest testZLBinary
+        putStrLn "Verižni seznami"
+        mapM_ printListTest testList
+        putStrLn "Zaporedja"
+        mapM_ printListTest testSequence
