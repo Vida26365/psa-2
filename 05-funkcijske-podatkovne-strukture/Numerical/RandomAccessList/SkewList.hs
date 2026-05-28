@@ -1,4 +1,4 @@
-module RandomAccessList.Skew
+module RandomAccessList.SkewList
   ( SkewList,
   )
 where

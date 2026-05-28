@@ -1,26 +1,26 @@
-module Pow2_1.IncreasingList
-  ( IncreasingList,
+module Pow2_1.NestedList
+  ( NestedList,
   )
 where
 
 import Pow2_1
 
-data IncreasingList a = Empty | Cons a (IncreasingList (a, a))
+data NestedList a = Nil | Cons a (NestedList (a, a))
 
-zipInc :: IncreasingList a -> IncreasingList a -> IncreasingList (a, a)
-zipInc Empty Empty = Empty
+zipInc :: NestedList a -> NestedList a -> NestedList (a, a)
+zipInc Nil Nil = Nil
 zipInc (Cons x xs) (Cons y ys) = Cons (x, y) (zipInc xs ys)
 
-unzipInc :: IncreasingList (a, a) -> (IncreasingList a, IncreasingList a)
-unzipInc Empty = (Empty, Empty)
+unzipInc :: NestedList (a, a) -> (NestedList a, NestedList a)
+unzipInc Nil = (Nil, Nil)
 unzipInc (Cons (x, y) t) =
   let (t1, t2) = unzipInc t
    in (Cons x t1, Cons y t2)
 
-instance Pow2_1 IncreasingList where
-  empty = Empty
+instance Pow2_1 NestedList where
+  empty = Nil
   linkTree x t1 t2 = Cons x (zipInc t1 t2)
-  sizeTree Empty = 0
+  sizeTree Nil = 0
   sizeTree (Cons _ t) = 1 + 2 * sizeTree t
   splitTree (Cons x t) =
     let (t1, t2) = unzipInc t

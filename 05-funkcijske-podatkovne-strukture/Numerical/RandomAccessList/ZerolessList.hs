@@ -1,4 +1,4 @@
-module RandomAccessList.Zeroless
+module RandomAccessList.ZerolessList
   ( ZerolessList,
   )
 where

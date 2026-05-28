@@ -7,11 +7,11 @@ import RandomAccessList
 import RandomAccessList.List (List)
 import Pow2.LeafTree (LeafTree)
 import Pow2_1.NodeTree (NodeTree)
-import Pow2_1.IncreasingList (IncreasingList)
+import Pow2_1.NestedList (NestedList)
 import RandomAccessList.Sequence (Sequence)
-import RandomAccessList.Skew (SkewList)
-import RandomAccessList.Zeroless (ZerolessList)
-import RandomAccessList.Bootstrapping (Bootstrapping)
+import RandomAccessList.SkewList (SkewList)
+import RandomAccessList.ZerolessList (ZerolessList)
+import RandomAccessList.NestedBinaryList (NestedBinaryList)
 
 testNatural :: (Natural n) => [(String, n)]
 testNatural =
@@ -48,9 +48,9 @@ main =
         mapM_ printListTest (testList :: [(String, Sequence Int)])
         putStrLn "Zaporedja brez ničel"
         mapM_ printListTest (testList :: [(String, ZerolessList LeafTree Int)])
-        putStrLn "Poševni seznami"
+        putStrLn "Poševni seznami z drevesi"
         mapM_ printListTest (testList :: [(String, SkewList NodeTree Int)])
-        putStrLn "Naraščajoči seznami"
-        mapM_ printListTest (testList :: [(String, SkewList IncreasingList Int)])
-        putStrLn "Naraščajoči seznami"
-        mapM_ printListTest (testList :: [(String, Bootstrapping Int)])
+        putStrLn "Poševni seznami z gnezdenimi seznami"
+        mapM_ printListTest (testList :: [(String, SkewList NestedList Int)])
+        putStrLn "Gnezdeni dvojiški seznami"
+        mapM_ printListTest (testList :: [(String, NestedBinaryList Int)])

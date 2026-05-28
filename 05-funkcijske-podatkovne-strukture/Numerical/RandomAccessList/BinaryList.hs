@@ -1,4 +1,4 @@
-module RandomAccessList.Binary
+module RandomAccessList.BinaryList
   ( BinaryList,
   )
 where

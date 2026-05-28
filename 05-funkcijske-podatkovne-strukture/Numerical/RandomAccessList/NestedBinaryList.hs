@@ -1,18 +1,18 @@
-module RandomAccessList.Bootstrapping
-  ( Bootstrapping,
+module RandomAccessList.NestedBinaryList
+  ( NestedBinaryList,
   )
 where
 
 import RandomAccessList
 
-data Bootstrapping a = Nil | Zero (Bootstrapping (a, a)) | One a (Bootstrapping (a, a))
+data NestedBinaryList a = Nil | Zero (NestedBinaryList (a, a)) | One a (NestedBinaryList (a, a))
 
-uncons :: Bootstrapping a -> (a, Bootstrapping a)
+uncons :: NestedBinaryList a -> (a, NestedBinaryList a)
 uncons (Zero ps) = (x, One y ps') where ((x, y), ps') = uncons ps
 uncons (One x Nil) = (x, Nil)
 uncons (One x ps) = (x, Zero ps)
 
-instance RandomAccessList Bootstrapping where
+instance RandomAccessList NestedBinaryList where
   nil = Nil
   head ps = x where (x, _) = uncons ps
   cons x Nil = One x Nil
@@ -23,7 +23,7 @@ instance RandomAccessList Bootstrapping where
   append ps qs = cons x (append ps' qs) where (x, ps') = uncons ps
   lookup i ps = look i ps
     where
-      look :: Int -> Bootstrapping a -> a
+      look :: Int -> NestedBinaryList a -> a
       look 0 (One x _) = x
       look i (One _ ps) = look (i - 1) (Zero ps)
       look i (Zero ps) =
@@ -34,7 +34,7 @@ instance RandomAccessList Bootstrapping where
     -- upd i y ps
     upd' i (\_ -> y) ps
     where
-      upd :: Int -> a -> Bootstrapping a -> Bootstrapping a
+      upd :: Int -> a -> NestedBinaryList a -> NestedBinaryList a
       upd 0 y (One _ ps) = One y ps
       upd i y (One x ps) = cons x (upd (i - 1) y (Zero ps))
       upd i y (Zero ps) =
@@ -42,7 +42,7 @@ instance RandomAccessList Bootstrapping where
               (x1, x2) = RandomAccessList.lookup j ps in
           Zero (if o == 0 then upd j (y, x2) ps else upd j (x1, y) ps)
       ---
-      upd' :: Int -> (a -> a) -> Bootstrapping a -> Bootstrapping a
+      upd' :: Int -> (a -> a) -> NestedBinaryList a -> NestedBinaryList a
       upd' 0 f (One x ps) = One (f x) ps
       upd' i f (One x ps) = cons x (upd' (i - 1) f (Zero ps))
       upd' i f (Zero ps) =
