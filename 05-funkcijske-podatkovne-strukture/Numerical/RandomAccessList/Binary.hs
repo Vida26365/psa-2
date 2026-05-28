@@ -4,7 +4,7 @@ module RandomAccessList.Binary
 where
 
 import RandomAccessList
-import RandomAccessList.Pow2
+import Pow2
 import Prelude hiding (head, lookup, tail)
 
 data Digit t a = Zero | One (t a) deriving (Show)

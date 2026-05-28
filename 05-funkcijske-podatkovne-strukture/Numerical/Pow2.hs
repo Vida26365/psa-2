@@ -1,4 +1,4 @@
-module RandomAccessList.Pow2
+module Pow2
   ( Pow2 (..),
   )
 where

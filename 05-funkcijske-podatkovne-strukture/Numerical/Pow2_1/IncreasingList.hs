@@ -1,9 +1,9 @@
-module RandomAccessList.Pow2_1.IncreasingList
+module Pow2_1.IncreasingList
   ( IncreasingList,
   )
 where
 
-import RandomAccessList.Pow2_1
+import Pow2_1
 
 data IncreasingList a = Empty | Cons a (IncreasingList (a, a))
 

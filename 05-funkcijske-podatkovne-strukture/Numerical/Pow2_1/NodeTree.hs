@@ -1,9 +1,9 @@
-module RandomAccessList.Pow2_1.NodeTree
+module Pow2_1.NodeTree
   ( NodeTree,
   )
 where
 
-import RandomAccessList.Pow2_1
+import Pow2_1
 
 data NodeTree a = Leaf2 | Node2 Int a (NodeTree a) (NodeTree a) deriving (Show)
 

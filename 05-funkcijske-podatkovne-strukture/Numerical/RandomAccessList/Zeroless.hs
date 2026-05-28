@@ -4,7 +4,7 @@ module RandomAccessList.Zeroless
 where
 
 import RandomAccessList
-import RandomAccessList.Pow2
+import Pow2
 import Prelude hiding (head, lookup, tail)
 
 data Digit t a = One (t a) | Two (t a) (t a) deriving (Show)

@@ -4,7 +4,7 @@ module RandomAccessList.Skew
 where
 
 import RandomAccessList
-import RandomAccessList.Pow2_1
+import Pow2_1
 import Prelude hiding (head, lookup, tail)
 
 newtype SkewList t a = Weights [(Int, t a)] deriving (Show)
