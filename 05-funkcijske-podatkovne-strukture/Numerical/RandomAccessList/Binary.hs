@@ -4,19 +4,19 @@ module RandomAccessList.Binary
 where
 
 import RandomAccessList
-import RandomAccessList.PowerTwo
+import RandomAccessList.Pow2
 import Prelude hiding (head, lookup, tail)
 
 data Digit t a = Zero | One (t a) deriving (Show)
 
 newtype BinaryList t a = BL [Digit t a] deriving (Show)
 
-consDigit :: (PowerTwo t) => t a -> [Digit t a] -> [Digit t a]
+consDigit :: (Pow2 t) => t a -> [Digit t a] -> [Digit t a]
 consDigit t [] = [One t]
 consDigit t (Zero : ds) = One t : ds
 consDigit t (One t' : ds) = Zero : consDigit (linkTree t t') ds
 
-unconsDigit :: (PowerTwo t) => [Digit t a] -> (t a, [Digit t a])
+unconsDigit :: (Pow2 t) => [Digit t a] -> (t a, [Digit t a])
 unconsDigit [One t] = (t, [])
 unconsDigit (One t : ds) = (t, Zero : ds)
 unconsDigit (Zero : ds) = (t1, One t2 : ds')
@@ -24,13 +24,13 @@ unconsDigit (Zero : ds) = (t1, One t2 : ds')
     (t', ds') = unconsDigit ds
     (t1, t2) = splitTree t'
 
-appendDigits :: (PowerTwo t) => [Digit t a] -> [Digit t a] -> [Digit t a]
+appendDigits :: (Pow2 t) => [Digit t a] -> [Digit t a] -> [Digit t a]
 appendDigits [] ds2 = ds2
 appendDigits ds1 ds2 =
   let (d, ds1') = unconsDigit ds1
    in consDigit d (appendDigits ds1' ds2)
 
-instance (PowerTwo t) => RandomAccessList (BinaryList t) where
+instance (Pow2 t) => RandomAccessList (BinaryList t) where
   nil = BL []
   cons x (BL ds) = BL (consDigit (singleton x) ds)
   head (BL (One d : _)) = lookupTree 0 d

@@ -1,20 +1,13 @@
-module RandomAccessList.PowerTwo
-  ( PowerTwo (..),
-    LeafTree,
+module RandomAccessList.Pow2.LeafTree
+  ( LeafTree,
   )
 where
 
-class PowerTwo t where
-  singleton :: a -> t a
-  linkTree :: t a -> t a -> t a
-  sizeTree :: t a -> Int
-  splitTree :: t a -> (t a, t a)
-  lookupTree :: Int -> t a -> a
-  updateTree :: Int -> a -> t a -> t a
+import RandomAccessList.Pow2
 
 data LeafTree a = Leaf a | Node Int (LeafTree a) (LeafTree a) deriving (Show)
 
-instance PowerTwo LeafTree where
+instance Pow2 LeafTree where
   singleton = Leaf
   linkTree t1 t2 = Node (sizeTree t1 + sizeTree t2) t1 t2
   sizeTree (Leaf _) = 1

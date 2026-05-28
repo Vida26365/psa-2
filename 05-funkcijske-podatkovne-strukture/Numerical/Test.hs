@@ -1,15 +1,17 @@
 import Natural
-import Natural.Binary
-import Natural.Peano
-import Natural.SkewBinary
-import Natural.ZerolessBinary
+import Natural.Binary (Binary)
+import Natural.Peano (Peano)
+import Natural.SkewBinary (SkewBinary)
+import Natural.ZerolessBinary (ZerolessBinary)
 import RandomAccessList
-import RandomAccessList.List
-import RandomAccessList.PowerTwo
-import RandomAccessList.PowerTwoMinusOne
-import RandomAccessList.Sequence
-import RandomAccessList.Skew
-import RandomAccessList.Zeroless
+import RandomAccessList.List (List)
+import RandomAccessList.Pow2.LeafTree (LeafTree)
+import RandomAccessList.Pow2_1.NodeTree (NodeTree)
+import RandomAccessList.Pow2_1.IncreasingList (IncreasingList)
+import RandomAccessList.Pow2_1 (Pow2_1)
+import RandomAccessList.Sequence (Sequence)
+import RandomAccessList.Skew (SkewList)
+import RandomAccessList.Zeroless (ZerolessList)
 
 testNatural :: (Natural n) => [(String, n)]
 testNatural =
@@ -33,20 +35,20 @@ main =
       printListTest (s, xs) = putStrLn $ "  " ++ s ++ " = " ++ show (map (`RandomAccessList.lookup` xs) [0 .. RandomAccessList.size xs - 1])
    in do
         putStrLn "Peanova naravna števila"
-        mapM_ printNumTest (testNatural :: [(String, Natural.Peano.Peano)])
+        mapM_ printNumTest (testNatural :: [(String, Peano)])
         putStrLn "Dvojiški zapis"
-        mapM_ printNumTest (testNatural :: [(String, Natural.Binary.Binary)])
+        mapM_ printNumTest (testNatural :: [(String, Binary)])
         putStrLn "Dvojiški zapis brez ničel"
-        mapM_ printNumTest (testNatural :: [(String, Natural.ZerolessBinary.ZerolessBinary)])
+        mapM_ printNumTest (testNatural :: [(String, ZerolessBinary)])
         putStrLn "Poševni dvojiški zapis"
-        mapM_ printNumTest (testNatural :: [(String, Natural.SkewBinary.SkewBinary)])
+        mapM_ printNumTest (testNatural :: [(String, SkewBinary)])
         putStrLn "Verižni seznami"
-        mapM_ printListTest (testList :: [(String, RandomAccessList.List.List Int)])
+        mapM_ printListTest (testList :: [(String, List Int)])
         putStrLn "Zaporedja"
-        mapM_ printListTest (testList :: [(String, RandomAccessList.Sequence.Sequence Int)])
+        mapM_ printListTest (testList :: [(String, Sequence Int)])
         putStrLn "Zaporedja brez ničel"
-        mapM_ printListTest (testList :: [(String, RandomAccessList.Zeroless.ZerolessList LeafTree Int)])
+        mapM_ printListTest (testList :: [(String, ZerolessList LeafTree Int)])
         putStrLn "Poševni seznami"
-        mapM_ printListTest (testList :: [(String, RandomAccessList.Skew.SkewList NodeTree Int)])
+        mapM_ printListTest (testList :: [(String, SkewList NodeTree Int)])
         putStrLn "Naraščajoči seznami"
-        mapM_ printListTest (testList :: [(String, RandomAccessList.Skew.SkewList IncreasingList Int)])
+        mapM_ printListTest (testList :: [(String, SkewList IncreasingList Int)])

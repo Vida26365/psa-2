@@ -4,19 +4,19 @@ module RandomAccessList.Zeroless
 where
 
 import RandomAccessList
-import RandomAccessList.PowerTwo
+import RandomAccessList.Pow2
 import Prelude hiding (head, lookup, tail)
 
 data Digit t a = One (t a) | Two (t a) (t a) deriving (Show)
 
 newtype ZerolessList t a = Digits [Digit t a] deriving (Show)
 
-consDigits :: (PowerTwo t) => t a -> [Digit t a] -> [Digit t a]
+consDigits :: (Pow2 t) => t a -> [Digit t a] -> [Digit t a]
 consDigits t [] = [One t]
 consDigits t (One t' : ds) = Two t t' : ds
 consDigits t (Two t1 t2 : ds) = One t : consDigits (linkTree t1 t2) ds
 
-unconsDigits :: (PowerTwo t) => [Digit t a] -> (t a, [Digit t a])
+unconsDigits :: (Pow2 t) => [Digit t a] -> (t a, [Digit t a])
 unconsDigits [One t] = (t, [])
 unconsDigits (Two t1 t2 : ds) = (t1, One t2 : ds)
 unconsDigits (One t : ds) = (t, Two ta tb : ds')
@@ -24,13 +24,13 @@ unconsDigits (One t : ds) = (t, Two ta tb : ds')
     (t', ds') = unconsDigits ds
     (ta, tb) = splitTree t'
 
-appendDigits :: (PowerTwo t) => [Digit t a] -> [Digit t a] -> [Digit t a]
+appendDigits :: (Pow2 t) => [Digit t a] -> [Digit t a] -> [Digit t a]
 appendDigits [] ds2 = ds2
 appendDigits ds1 ds2 =
   let (t, ds1') = unconsDigits ds1
    in consDigits t (appendDigits ds1' ds2)
 
-instance (PowerTwo t) => RandomAccessList (ZerolessList t) where
+instance (Pow2 t) => RandomAccessList (ZerolessList t) where
   nil = Digits []
   cons x (Digits ds) = Digits (consDigits (singleton x) ds)
   head (Digits (One t : _)) = lookupTree 0 t
