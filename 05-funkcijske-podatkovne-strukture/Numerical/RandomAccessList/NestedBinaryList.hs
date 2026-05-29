@@ -45,7 +45,7 @@ instance RandomAccessList NestedBinaryList where
       upd' i f (One x ps) = cons x (upd' (i - 1) f (Zero ps))
       upd' i f (Zero ps) =
           let (j, o) = i `divMod` 2
-              f' (x1, x2) = if o == 0 then (f x1, x2) else (x1, f x2) in
+              f' = if o == 0 then (\(x1, x2) -> (f x1, x2)) else (\(x1, x2) -> (x1, f x2)) in
           Zero (upd' j f' ps)
 
   size Nil = 0
