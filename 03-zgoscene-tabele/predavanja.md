@@ -22,7 +22,7 @@ Pri veriženju vzdržujemo tabelo $T$, kjer je za $0 ≤ j < m$ vsak $T[j]$ (zar
 - `lookup(x)`: preiščemo seznam $T[h(x)]$; čas sorazmeren z dolžino seznama.
 - `delete(x)`: element $x$ poiščemo in odstranimo iz $T[h(x)]$.
 
-Za analizo predpostavimo _enostavno enakomerno zgoščevanje_ (angl. _simple uniform hashing_): za vsak ključ $x$ in vsak $k \in [m]$ velja
+Za analizo predpostavimo _enostavno enakomerno zgoščevanje_ (angl. _simple uniform hashing_): za naključno izbran ključ $x$ za vsak $k \in [m]$ velja
 
 $$P(h(x) = k) = \frac{1}{m}$$
 
