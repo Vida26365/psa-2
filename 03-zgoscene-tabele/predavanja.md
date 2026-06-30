@@ -10,12 +10,9 @@ Zaradi enostavnosti predpostavimo, da delamo samo s ključi (brez pridruženih v
 
 Če je velikost univerzuma $u$ primerljiva s številom shranjenih elementov $n$, lahko ključ $x$ shranimo kar na mestu $x$ v tabeli velikosti $u$. Vse tri operacije tedaj tečejo v času $O(1)$.
 
-Običajno pa je $n \ll u$, zato bi bila taka tabela nerazumno velika. Namesto tega iščemo _zgoščevalno funkcijo_ $h \colon U \to {0, 1, \ldots, m - 1}$, ki ključe preslika v tabelo velikosti $m$. Želimo, da je:
-
-1. **hitra**: izračunljiva v času $O(1)$,
-2. **lokalno injektivna**: za ustrezno majhne podmnožice $U' \subseteq U$ z $|U'| \leq m$ je zožitev $h|_{U'}$ injektivna.
-
-Ker lokalna injektivnost na splošno ne drži za vse možne podmnožice, moramo upoštevati možnost _trkov_ ($h(x_1) = h(x_2)$ za $x_1 \neq x_2$). Poznamo dva glavna pristopa za reševanje trkov:
+Običajno pa je $n \ll u$, zato bi bila taka tabela nerazumno velika. Namesto tega iščemo _zgoščevalno funkcijo_ $h \colon U \to {0, 1, \ldots, m - 1}$, ki ključe preslika v tabelo velikosti $m$. Želimo, da je **hitra**: izračunljiva v času $O(1)$.
+Ker je $m < u$ potem $h$ ne more biti injektivna, zato moramo upoštevati možnost
+ _trkov_ ($h(x_1) = h(x_2)$ za $x_1 \neq x_2$). Poznamo dva glavna pristopa za reševanje trkov:
 
 ## Reševanje trkov z veriženjem
 
