@@ -167,7 +167,7 @@ Rešitev je, da $h$ **izberemo naključno** iz neke vnaprej določene _družine_
 **Definicija.** Družina funkcij $\mathcal{H} = \{ h \colon U \to [m] \}$ je _univerzalna_, če za vsaka ključa $x_1 \neq x_2 \in U$ velja
 
 $$
-\#\{h \sim \mathcal{H} \mid (h(x_1) = h(x_2) \} \leq \frac{\# \mathcal{H}}{m}.
+|\{h \sim \mathcal{H} \mid (h(x_1) = h(x_2) \}| \leq \frac{|\mathcal{H}|}{m}.
 $$
 
 Enostavno enakomerno zgoščevanje zahteva, da za vsak $x$ velja $P(h(x) = y) = 1/m$ za vsak $y$. Ključni člen pri dokazu časovne zahtevnosti poizvedb v zgoščenih tabelah z veriženju je bila ocena $E[X_{ij}] = P(h(x_i) = h(x_j)) = 1/m$, ki ga pri univerzalnih družinah lahko ocenimo na $E[X_{ij}] \leq 1/m$, s čimer pričakovani ostanejo $\Theta(1 + \alpha)$.
@@ -206,7 +206,7 @@ Veriženje in odprto naslavljanje zagotavljata le pričakovani čas $O(1)$, najs
 
 Opazimo, da iz univerzalnosti družine $\mathcal{H}$ sledi
 
-$$E\big[\#\text{trkov}\big] = E\left[\sum_{\{x, y\} \subseteq S} [h(x) = h(y)]\right] = \binom{n}{2} \cdot \frac{1}{m} < \frac{n^2}{2m}.$$
+$$E\big[\text{št. trkov}\big] = E\left[\sum_{\{x, y\} \subseteq S} [h(x) = h(y)]\right] = \binom{n}{2} \cdot \frac{1}{m} < \frac{n^2}{2m}.$$
 
 Če torej izberemo $m = n^2$, po neenakosti Markova ($P(X \geq k) \leq E[X]/k$) velja, da je pričakovano število trkov manjše od $1/2$, kar vodi do poizvedb v času $O(1)$. Slabost je poraba $O(n^2)$ prostora.
 
