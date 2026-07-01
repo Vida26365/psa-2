@@ -64,6 +64,27 @@ $$
 
 ∎
 
+_Alternativen dokaz._
+$$
+ \text{čas iskanja v strukturi} = \Theta(1) + \text{čas iskanja po seznamu } T[h(x)] 
+ $$
+ $$
+    \mathbb{E}(\text{čas iskanje v strukturi}) = \Theta(1) + \mathbb{E}(\text{čas iskanje po seznamu } T[h(x)])
+$$
+Kar moramo še oceniti je $\mathbb{E}(\text{čas iskanje po seznamu } T[h(x)])$.
+Najprej si poglejmo pričakovani čas iskanja elementa po seznamu $T[j]$ dolžine $n_j$ je
+$$
+\sum_{k=1}^{n_j} \Theta(k) \cdot P(T[j][k] = x) = \sum_{k=1}^{n_j} \Theta(k) \cdot \frac{1}{n_j} = \Theta(\frac{n_j \cdot (n_j - 1)}{2} \cdot \frac{1}{n_j}) = \Theta(n_j)
+$$
+
+Ker je $\mathbb{E}$ linearna funkcija, velja $\Theta(\mathbb{E}(f(n))) = \mathbb{E}(\Theta(f(n)))$.
+Torej je pričakovan čas iskanja elemeta v strukturi
+$$
+    \mathbb{E}(1 + \Theta(n_j)) = \Theta(1 + \mathbb{E}(n_j)) = \Theta(1 + \alpha)
+$$
+
+∎
+
 Če je $m = \Theta(n)$, tj. $\alpha = O(1)$, so vse tri operacije v pričakovanem času $O(1)$.
 
 ## Reševanje trkov z odprtim naslavljanjem
