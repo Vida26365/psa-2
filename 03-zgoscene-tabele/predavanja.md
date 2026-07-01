@@ -122,10 +122,19 @@ To je močnejša predpostavka od enostavnega enakomernega zgoščevanja in v spl
 
 **Izrek.** Ob predpostavljenem enakomernem zgoščevanju je pričakovano število poizvedb pri neuspešnem iskanju kvečjemu $\frac{1}{1 - \alpha}$, kjer je $\alpha = n/m < 1$.
 
-_Dokaz._ Naj bo $X$ slučajna spremenljivka, ki šteje število poizvedb. V $i$-ti poizvedbi naletimo na zasedeno mesto z verjetnostjo kvečjemu $\frac{n - i + 1}{m - i + 1} \leq \frac{n}{m} = \alpha$. Zato je
-
+_Dokaz._ Naj bo $X$ slučajna spremenljivka, ki šteje število poizvedb. V $k$-ti poizvedbi naletimo na zasedeno mesto (torej da $X \neq k$) z verjetnostjo kvečjemu $\frac{n - k + 1}{m - k + 1} \leq \frac{n}{m} = \alpha$. 
+Definirajmo indikator
+    $$
+        I_k = 
+        \begin{cases}
+            1; & \text{Šetvilo poizvedb} > k\\
+            0; & \text{Število poizvedb} \leq k.
+        \end{cases}
+    $$
+Potem je $X = \sum_{k=1}^{\infty} I_k$
+    Zato je
 $$
-E[X] = \sum_{i=0}^{\infty} P(X > i) \leq \sum_{i=0}^{\infty} \alpha^i = \frac{1}{1 - \alpha}.
+\mathbb{E}(X) = \sum_{k=0}^{\infty}\mathbb{E}(I_k = 1) = \sum_{k=0}^{\infty}\mathbb{P}(X > k) = \sum_{k=0}^{\infty}\prod_{c = 0}^{k} \mathbb{P}(X \neq c) \leq \sum_{k=0}^{\infty} \alpha^{k} = \frac{1}{1 - \alpha}
 $$
 
 ∎
